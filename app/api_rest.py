@@ -14,9 +14,10 @@ Docs:   http://localhost:8000/docs
 """
 import time
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 
+import app.fila as fila
 from app.modelo import carregar_modelo
 
 app = FastAPI(title="Servico de Inferencia - C1.A2", version="0.1.0")
@@ -56,11 +57,16 @@ def predict_sync(entrada: Entrada):
 # ------------------------------------------------------------------
 # TAREFA 1 - submissao assincrona
 # ------------------------------------------------------------------
-# @app.post("/predict", status_code=202)
-# def predict(entrada: Entrada):
-#     """Deve enfileirar a tarefa e devolver {"id": ...} SEM esperar."""
-#     # DICA: use app.fila.enfileirar(entrada.texto)
-#     raise NotImplementedError("implemente a submissao assincrona")
+@app.post("/predict", status_code=status.HTTP_202_ACCEPTED)
+def predict(entrada: Entrada):
+    #Enfileira a tarefa e devolve o ID com status 202 SEM esperar a inferência
+    if not entrada.texto.strip():
+        raise HTTPException(status_code=400, detail="texto vazio")
+
+    # Enfileira no Redis e obtém o id gerado
+    tarefa_id = fila.enfileirar(entrada.texto)
+
+    return {"id": tarefa_id}
 
 
 # ------------------------------------------------------------------

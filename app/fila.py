@@ -20,7 +20,7 @@ _cliente = None
 def cliente():
     global _cliente
     if _cliente is None:
-        _cliente = redis.from_url(REDIS_URL, decode_responses=True)
+        _cliente = redis.from_url(REDIS_URL, socket_timeout=10, decode_responses=True)
     return _cliente
 
 
