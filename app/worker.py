@@ -32,12 +32,8 @@ def main():
             resultado["status"] = "pronto"
             resultado["tempo_ms"] = round((time.time() - inicio) * 1000, 2)
 
-            # TAREFA 3: guarde o resultado para o cliente consultar depois.
-            # DICA: fila.guardar_resultado(tarefa["id"], resultado)
-            raise NotImplementedError("guarde o resultado na TAREFA 3")
+            fila.guardar_resultado(tarefa["id"], resultado)
 
-        except NotImplementedError:
-            raise
         except Exception as erro:  # noqa: BLE001
             # TAREFA 5: retentativa + dead-letter em vez de so registrar.
             print(f"[worker] ERRO em {tarefa['id']}: {erro}")
